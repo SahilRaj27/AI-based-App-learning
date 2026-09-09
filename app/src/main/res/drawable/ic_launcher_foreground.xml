@@ -1,0 +1,53 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Main clipboard body: 32 to 76 x, 28 to 80 y -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,32 h36 c2.2,0 4,1.8 4,4 v40 c0,2.2 -1.8,4 -4,4 h-36 c-2.2,0 -4,-1.8 -4,-4 v-40 c0,-2.2 1.8,-4 4,-4 z" />
+    <!-- Clipboard header clip -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M46,26 h16 c1.1,0 2,0.9 2,2 v4 h-20 v-4 c0,-1.1 0.9,-2 2,-2 z" />
+    <!-- Inner clip hole -->
+    <path
+        android:fillColor="#1E1B4B"
+        android:pathData="M52,28 h4 c0.55,0 1,0.45 1,1 v1 h-6 v-1 c0,-0.55 0.45,-1 1,-1 z" />
+    <!-- Task Row 1: Checkmark -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M40.5,44.5 l2.5,2.5 l5.5,-5.5 l1.5,1.5 l-7,7 l-4,-4 z" />
+    <!-- Task Row 1: Text bar -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M53,43 h16 c0.8,0 1.5,0.7 1.5,1.5 c0,0.8 -0.7,1.5 -1.5,1.5 h-16 c-0.8,0 -1.5,-0.7 -1.5,-1.5 c0,-0.8 0.7,-1.5 1.5,-1.5 z" />
+    <!-- Task Row 2: Checkmark -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M40.5,55.5 l2.5,2.5 l5.5,-5.5 l1.5,1.5 l-7,7 l-4,-4 z" />
+    <!-- Task Row 2: Text bar -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M53,54 h14 c0.8,0 1.5,0.7 1.5,1.5 c0,0.8 -0.7,1.5 -1.5,1.5 h-14 c-0.8,0 -1.5,-0.7 -1.5,-1.5 c0,-0.8 0.7,-1.5 1.5,-1.5 z" />
+    <!-- Task Row 3: Circle bullet -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M44,65.5 A2.5,2.5 0 1 0 44,70.5 A2.5,2.5 0 1 0 44,65.5" />
+    <!-- Task Row 3: Text bar -->
+    <path
+        android:fillColor="#CBD5E1"
+        android:pathData="M53,66.5 h11 c0.8,0 1.5,0.7 1.5,1.5 c0,0.8 -0.7,1.5 -1.5,1.5 h-11 c-0.8,0 -1.5,-0.7 -1.5,-1.5 c0,-0.8 0.7,-1.5 1.5,-1.5 z" />
+    <!-- Cloud sync badge overlay in bottom right corner -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M66,62 h12 c3.3,0 6,2.7 6,6 c0,3 -2.2,5.5 -5.1,5.9 c-0.4,2.9 -2.9,5.1 -5.9,5.1 c-2.4,0 -4.5,-1.4 -5.4,-3.5 c-0.5,0.3 -1.1,0.5 -1.6,0.5 c-2.2,0 -4,-1.8 -4,-4 c0,-1.7 1.1,-3.1 2.6,-3.7 c-0.1,-0.4 -0.2,-0.9 -0.2,-1.3 c0,-2.8 2.2,-5 5,-5 z" />
+    <!-- Sync arrows inside cloud -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M70,68.5 l1.8,-1.8 v1.3 c1.5,0 2.7,1.2 2.7,2.7 h-1 c0,-0.9 -0.8,-1.7 -1.7,-1.7 v1.3 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M74,72.5 l-1.8,1.8 v-1.3 c-1.5,0 -2.7,-1.2 -2.7,-2.7 h1 c0,0.9 0.8,1.7 1.7,1.7 v-1.3 z" />
+</vector>
