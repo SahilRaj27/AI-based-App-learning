@@ -82,6 +82,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.local.TaskEntity
@@ -98,8 +104,13 @@ import com.example.ui.theme.CloudPendingAmber
 import com.example.ui.theme.CloudSyncedGreen
 import com.example.ui.theme.CloudSyncingBlue
 import com.example.ui.theme.EmeraldTertiary
+import com.example.ui.theme.FuturisticMeshBackground
 import com.example.ui.theme.IndigoPrimary
+import com.example.ui.theme.NeonCyan
+import com.example.ui.theme.NeonEmerald
+import com.example.ui.theme.NeonViolet
 import com.example.ui.theme.SkySecondary
+import com.example.ui.theme.iosGlassmorphic
 import com.example.ui.viewmodel.TaskViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -111,6 +122,7 @@ fun DailyTasksApp(
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val isDark = isSystemInDarkTheme()
 
     // State collections
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
@@ -174,199 +186,340 @@ fun DailyTasksApp(
         label = "spin_angle"
     )
 
-    Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Daily Tasks",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+    FuturisticMeshBackground(
+        modifier = modifier.fillMaxSize(),
+        isDark = isDark
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentWindowInsets = WindowInsets.safeDrawing,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            if (isDark) Color(0x800F1426) else Color(0x99FFFFFF)
                         )
-                        Text(
-                            text = "Plan, track & sync across devices",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        .border(
+                            width = 0.5.dp,
+                            color = if (isDark) Color(0x20FFFFFF) else Color(0x30CBD5E1),
+                            shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                         )
-                    }
-                },
-                actions = {
-                    // Gemini AI Assistant button
-                    IconButton(
-                        onClick = { showGeminiChatSheet = true },
-                        modifier = Modifier.testTag("gemini_chat_top_btn")
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(Brush.linearGradient(listOf(IndigoPrimary, SkySecondary))),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = "Gemini AI Assistant",
-                                tint = Color.White,
-                                modifier = Modifier.size(17.dp)
-                            )
-                        }
-                    }
-
-                    // Search toggle button
-                    IconButton(
-                        onClick = {
-                            isSearchExpanded = !isSearchExpanded
-                            if (!isSearchExpanded) viewModel.setSearchQuery("")
-                        },
-                        modifier = Modifier.testTag("search_toggle_btn")
-                    ) {
-                        Icon(
-                            imageVector = if (isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    // Cloud Sync status badge pill
-                    Surface(
-                        onClick = { showCloudSyncSheet = true },
-                        shape = RoundedCornerShape(16.dp),
-                        color = when (cloudSyncStatus.state) {
-                            SyncState.SYNCING -> CloudSyncingBlue.copy(alpha = 0.15f)
-                            SyncState.SUCCESS -> CloudSyncedGreen.copy(alpha = 0.15f)
-                            SyncState.ERROR -> CloudErrorRed.copy(alpha = 0.15f)
-                            SyncState.IDLE -> if (unsyncedCount > 0) CloudPendingAmber.copy(alpha = 0.15f) else CloudSyncedGreen.copy(alpha = 0.15f)
-                        },
-                        modifier = Modifier.testTag("cloud_sync_badge_btn")
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (cloudSyncStatus.state == SyncState.SYNCING) {
-                                Icon(
-                                    imageVector = Icons.Default.Sync,
-                                    contentDescription = "Syncing",
-                                    tint = CloudSyncingBlue,
+                ) {
+                    TopAppBar(
+                        title = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
                                     modifier = Modifier
-                                        .size(15.dp)
-                                        .rotate(syncRotation)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Syncing",
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        color = CloudSyncingBlue,
-                                        fontWeight = FontWeight.Bold
+                                        .size(38.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            Brush.linearGradient(
+                                                listOf(Color(0xFF6366F1), Color(0xFF06B6D4))
+                                            )
+                                        )
+                                        .border(
+                                            1.dp,
+                                            Brush.linearGradient(listOf(Color.White.copy(alpha = 0.7f), Color.Transparent)),
+                                            RoundedCornerShape(12.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.TaskAlt,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(22.dp)
                                     )
-                                )
-                            } else {
-                                val icon = if (unsyncedCount > 0) Icons.Default.CloudUpload else Icons.Default.CloudDone
-                                val tint = if (unsyncedCount > 0) CloudPendingAmber else CloudSyncedGreen
-                                val text = if (unsyncedCount > 0) "$unsyncedCount" else "Synced"
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        text = "Daily Tasks",
+                                        style = MaterialTheme.typography.titleLarge.copy(
+                                            fontWeight = FontWeight.ExtraBold,
+                                            letterSpacing = (-0.5).sp,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    )
+                                    Text(
+                                        text = "Plan, track & sync across devices",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontSize = 10.sp
+                                        )
+                                    )
+                                }
+                            }
+                        },
+                        actions = {
+                            // Gemini AI Assistant button
+                            IconButton(
+                                onClick = { showGeminiChatSheet = true },
+                                modifier = Modifier.testTag("gemini_chat_top_btn")
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(34.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            Brush.linearGradient(
+                                                listOf(Color(0xFF8B5CF6), Color(0xFF06B6D4))
+                                            )
+                                        )
+                                        .border(
+                                            1.dp,
+                                            Brush.linearGradient(listOf(Color.White.copy(alpha = 0.6f), Color.Transparent)),
+                                            CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.AutoAwesome,
+                                        contentDescription = "Gemini AI Assistant",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
 
+                            // Search toggle button
+                            IconButton(
+                                onClick = {
+                                    isSearchExpanded = !isSearchExpanded
+                                    if (!isSearchExpanded) viewModel.setSearchQuery("")
+                                },
+                                modifier = Modifier.testTag("search_toggle_btn")
+                            ) {
                                 Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = tint,
-                                    modifier = Modifier.size(15.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = text,
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        color = tint,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    imageVector = if (isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                    contentDescription = "Search",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                        }
-                    }
 
-                    // Account & Firebase Auth button
-                    IconButton(
-                        onClick = { showAuthAccountSheet = true },
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .testTag("auth_account_top_btn")
-                    ) {
-                        val user = authUiState.currentUser
-                        if (user != null) {
+                            // Cloud Sync status badge pill with iOS Gloss
+                            val badgeInfo = when (cloudSyncStatus.state) {
+                                SyncState.SYNCING -> SyncBadgeInfo(
+                                    bg = CloudSyncingBlue.copy(alpha = 0.2f),
+                                    border = CloudSyncingBlue.copy(alpha = 0.6f),
+                                    text = "Syncing",
+                                    icon = Icons.Default.Sync,
+                                    tint = CloudSyncingBlue
+                                )
+                                SyncState.SUCCESS -> SyncBadgeInfo(
+                                    bg = CloudSyncedGreen.copy(alpha = 0.18f),
+                                    border = CloudSyncedGreen.copy(alpha = 0.5f),
+                                    text = "Synced",
+                                    icon = Icons.Default.CloudDone,
+                                    tint = CloudSyncedGreen
+                                )
+                                SyncState.ERROR -> SyncBadgeInfo(
+                                    bg = CloudErrorRed.copy(alpha = 0.2f),
+                                    border = CloudErrorRed.copy(alpha = 0.6f),
+                                    text = "Error",
+                                    icon = Icons.Default.CloudSync,
+                                    tint = CloudErrorRed
+                                )
+                                SyncState.IDLE -> {
+                                    if (unsyncedCount > 0) {
+                                        SyncBadgeInfo(
+                                            bg = CloudPendingAmber.copy(alpha = 0.2f),
+                                            border = CloudPendingAmber.copy(alpha = 0.6f),
+                                            text = "$unsyncedCount",
+                                            icon = Icons.Default.CloudUpload,
+                                            tint = CloudPendingAmber
+                                        )
+                                    } else {
+                                        SyncBadgeInfo(
+                                            bg = CloudSyncedGreen.copy(alpha = 0.18f),
+                                            border = CloudSyncedGreen.copy(alpha = 0.5f),
+                                            text = "Synced",
+                                            icon = Icons.Default.CloudDone,
+                                            tint = CloudSyncedGreen
+                                        )
+                                    }
+                                }
+                            }
+
                             Box(
                                 modifier = Modifier
-                                    .size(28.dp)
-                                    .clip(CircleShape)
-                                    .background(IndigoPrimary),
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(badgeInfo.bg)
+                                    .border(1.dp, badgeInfo.border, RoundedCornerShape(16.dp))
+                                    .clickable { showCloudSyncSheet = true }
+                                    .padding(horizontal = 9.dp, vertical = 5.dp)
+                                    .testTag("cloud_sync_badge_btn"),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = (user.displayName?.take(1) ?: user.email?.take(1) ?: "U").uppercase(),
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = badgeInfo.icon,
+                                        contentDescription = null,
+                                        tint = badgeInfo.tint,
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .then(
+                                                if (cloudSyncStatus.state == SyncState.SYNCING)
+                                                    Modifier.rotate(syncRotation)
+                                                else Modifier
+                                            )
                                     )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = badgeInfo.text,
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            color = badgeInfo.tint,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 11.sp
+                                        )
+                                    )
+                                }
+                            }
+
+                            // Account & Firebase Auth button
+                            IconButton(
+                                onClick = { showAuthAccountSheet = true },
+                                modifier = Modifier
+                                    .padding(end = 4.dp)
+                                    .testTag("auth_account_top_btn")
+                            ) {
+                                val user = authUiState.currentUser
+                                if (user != null) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .clip(CircleShape)
+                                            .background(
+                                                Brush.linearGradient(
+                                                    listOf(Color(0xFF6366F1), Color(0xFF4F46E5))
+                                                )
+                                            )
+                                            .border(1.dp, Color.White.copy(alpha = 0.6f), CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = (user.displayName?.take(1) ?: user.email?.take(1) ?: "U").uppercase(),
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Black
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.AccountCircle,
+                                        contentDescription = "Account & Cloud Sync",
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        )
+                    )
+                }
+            },
+            floatingActionButton = {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Secondary AI Planner FAB with Glossy Glass
+                    Box(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(
+                                if (isDark) Brush.linearGradient(listOf(Color(0x501E243A), Color(0x301E243A)))
+                                else Brush.linearGradient(listOf(Color(0xD0FFFFFF), Color(0xA0F1F5F9)))
+                            )
+                            .border(
+                                1.dp,
+                                Brush.linearGradient(
+                                    listOf(NeonViolet.copy(alpha = 0.8f), NeonCyan.copy(alpha = 0.5f))
+                                ),
+                                RoundedCornerShape(18.dp)
+                            )
+                            .clickable { showGeminiChatSheet = true }
+                            .testTag("gemini_fab_btn"),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = "Ask Gemini AI",
+                            tint = if (isDark) NeonCyan else Color(0xFF6366F1),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    // Primary Add Task FAB with Liquid Neon iOS Sheen
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(22.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(Color(0xFF6366F1), Color(0xFF4F46E5), Color(0xFF06B6D4))
+                                )
+                            )
+                            .border(
+                                1.2.dp,
+                                Brush.linearGradient(
+                                    listOf(Color.White.copy(alpha = 0.9f), Color.White.copy(alpha = 0.1f))
+                                ),
+                                RoundedCornerShape(22.dp)
+                            )
+                            .drawWithContent {
+                                drawContent()
+                                // Specular top highlight
+                                val sheenHeight = size.height * 0.45f
+                                drawRect(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(Color.White.copy(alpha = 0.35f), Color.Transparent),
+                                        startY = 0f,
+                                        endY = sheenHeight
+                                    ),
+                                    size = Size(size.width, sheenHeight)
                                 )
                             }
-                        } else {
+                            .clickable {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !hasNotificationPermission) {
+                                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                                taskToEdit = null
+                                showAddTaskDialog = true
+                            }
+                            .padding(horizontal = 20.dp, vertical = 14.dp)
+                            .testTag("add_task_fab"),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = "Account & Cloud Sync",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add Task",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Add Task",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.White,
+                                    letterSpacing = 0.2.sp
+                                )
                             )
                         }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        },
-        floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                // Secondary AI Planner FAB
-                FloatingActionButton(
-                    onClick = { showGeminiChatSheet = true },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier.testTag("gemini_fab_btn")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = "Ask Gemini AI",
-                        modifier = Modifier.size(22.dp)
-                    )
                 }
-
-                // Primary Add Task FAB
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !hasNotificationPermission) {
-                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                        }
-                        taskToEdit = null
-                        showAddTaskDialog = true
-                    },
-                    containerColor = IndigoPrimary,
-                    contentColor = Color.White,
-                    shape = RoundedCornerShape(16.dp),
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Add Task") },
-                    text = { Text("Add Task", fontWeight = FontWeight.SemiBold) },
-                    modifier = Modifier.testTag("add_task_fab")
-                )
-            }
-        },
-        modifier = modifier.fillMaxSize()
-    ) { innerPadding ->
+            },
+            modifier = Modifier.fillMaxSize()
+        ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -561,6 +714,7 @@ fun DailyTasksApp(
             onDismiss = { showAuthAccountSheet = false }
         )
     }
+    }
 }
 
 @Composable
@@ -568,56 +722,135 @@ private fun EmptyStateView(
     searchActive: Boolean,
     onAddTask: () -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(72.dp)
-                    .clip(CircleShape)
-                    .background(IndigoPrimary.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (searchActive) Icons.Default.Search else Icons.Default.TaskAlt,
-                    contentDescription = null,
-                    tint = IndigoPrimary,
-                    modifier = Modifier.size(36.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .iosGlassmorphic(
+                    cornerRadius = 24.dp,
+                    isDark = isDark,
+                    hasSpecularSheen = true,
+                    borderAlpha = 0.8f
                 )
-            }
+                .padding(28.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(76.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.radialGradient(
+                                listOf(
+                                    if (isDark) NeonCyan.copy(alpha = 0.35f) else Color(0x356366F1),
+                                    Color.Transparent
+                                )
+                            )
+                        )
+                        .border(
+                            1.dp,
+                            Brush.linearGradient(
+                                listOf(
+                                    if (isDark) NeonCyan.copy(alpha = 0.7f) else Color(0x606366F1),
+                                    Color.Transparent
+                                )
+                            ),
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (searchActive) Icons.Default.Search else Icons.Default.TaskAlt,
+                        contentDescription = null,
+                        tint = if (isDark) NeonCyan else Color(0xFF6366F1),
+                        modifier = Modifier.size(38.dp)
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
-            Text(
-                text = if (searchActive) "No matching tasks" else "All clear for this day",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
-            )
+                Text(
+                    text = if (searchActive) "No Matching Tasks" else "All Clear for Today",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = (-0.3).sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    textAlign = TextAlign.Center
+                )
 
-            Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = if (searchActive) "Try searching with a different keyword or clear the search filter."
-                else "No scheduled tasks found. Tap below to create your daily priorities.",
-                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                textAlign = TextAlign.Center
-            )
+                Text(
+                    text = if (searchActive) "Try searching with a different keyword or reset active filters."
+                    else "No tasks scheduled for this day yet. Stay ahead by planning your priority goals.",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp
+                    ),
+                    textAlign = TextAlign.Center
+                )
 
-            if (!searchActive) {
-                Spacer(modifier = Modifier.height(16.dp))
-                TextButton(onClick = onAddTask) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Add your first task", fontWeight = FontWeight.SemiBold)
+                if (!searchActive) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(Color(0xFF6366F1), Color(0xFF4F46E5))
+                                )
+                            )
+                            .border(
+                                1.dp,
+                                Brush.linearGradient(listOf(Color.White.copy(alpha = 0.8f), Color.Transparent)),
+                                RoundedCornerShape(14.dp)
+                            )
+                            .clickable(onClick = onAddTask)
+                            .padding(horizontal = 16.dp, vertical = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Create First Task",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+private data class SyncBadgeInfo(
+    val bg: Color,
+    val border: Color,
+    val text: String,
+    val icon: ImageVector,
+    val tint: Color
+)
+
+

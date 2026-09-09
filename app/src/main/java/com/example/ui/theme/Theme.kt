@@ -15,17 +15,17 @@ private val DarkColorScheme =
   darkColorScheme(
     primary = IndigoPrimary,
     onPrimary = Color.White,
-    primaryContainer = IndigoDark,
-    onPrimaryContainer = Color.White,
-    secondary = SkySecondary,
-    onSecondary = Color.White,
-    tertiary = EmeraldTertiary,
-    onTertiary = Color.White,
-    background = DarkBackground,
+    primaryContainer = Color(0x356366F1),
+    onPrimaryContainer = Color(0xFFE0E7FF),
+    secondary = NeonCyan,
+    onSecondary = Color.Black,
+    tertiary = NeonEmerald,
+    onTertiary = Color.Black,
+    background = CosmicBackgroundDark,
     onBackground = DarkOnSurface,
-    surface = DarkSurface,
+    surface = CosmicSurfaceDark,
     onSurface = DarkOnSurface,
-    surfaceVariant = DarkSurfaceVariant,
+    surfaceVariant = CosmicSurfaceVariantDark,
     onSurfaceVariant = DarkOnSurfaceVariant
   )
 

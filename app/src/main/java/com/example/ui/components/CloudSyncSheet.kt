@@ -7,6 +7,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,7 +69,15 @@ import com.example.ui.theme.CloudErrorRed
 import com.example.ui.theme.CloudPendingAmber
 import com.example.ui.theme.CloudSyncedGreen
 import com.example.ui.theme.CloudSyncingBlue
-import com.example.ui.theme.IndigoPrimary
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import com.example.ui.theme.NeonCyan
+import com.example.ui.theme.NeonEmerald
+import com.example.ui.theme.NeonViolet
+import com.example.ui.theme.iosGlassmorphic
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -86,6 +95,7 @@ fun CloudSyncSheet(
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val isDark = isSystemInDarkTheme()
 
     val infiniteTransition = rememberInfiniteTransition(label = "sync_spin")
     val rotation by infiniteTransition.animateFloat(
@@ -101,7 +111,8 @@ fun CloudSyncSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        containerColor = if (isDark) Color(0xF20F1426) else Color(0xF8FFFFFF)
     ) {
         Column(
             modifier = Modifier
@@ -118,29 +129,46 @@ fun CloudSyncSheet(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(38.dp)
                             .clip(CircleShape)
-                            .background(IndigoPrimary.copy(alpha = 0.12f)),
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(NeonCyan, Color(0xFF6366F1))
+                                )
+                            )
+                            .border(1.dp, Color.White.copy(alpha = 0.6f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.CloudSync,
                             contentDescription = null,
-                            tint = IndigoPrimary,
+                            tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Cloud Synchronization",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
+                    Column {
+                        Text(
+                            text = "Cloud Synchronization",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = (-0.3).sp
+                            )
+                        )
+                        Text(
+                            text = "Real-time encrypted Firebase sync",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
-            // Main Status Banner Card
+            // Main Status Banner Card with Glassmorphic styling
             val (statusColor, statusTitle, statusSubtitle) = when (syncStatus.state) {
                 SyncState.SYNCING -> Triple(
                     CloudSyncingBlue,
@@ -174,22 +202,27 @@ fun CloudSyncSheet(
                 }
             }
 
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = statusColor.copy(alpha = 0.1f)),
-                modifier = Modifier.fillMaxWidth()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .iosGlassmorphic(
+                        cornerRadius = 20.dp,
+                        isDark = isDark,
+                        hasSpecularSheen = true,
+                        borderAlpha = 0.8f
+                    )
+                    .padding(16.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(44.dp)
+                            .size(46.dp)
                             .clip(CircleShape)
-                            .background(statusColor.copy(alpha = 0.2f)),
+                            .background(statusColor.copy(alpha = 0.18f))
+                            .border(1.dp, statusColor.copy(alpha = 0.5f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         if (syncStatus.state == SyncState.SYNCING) {
@@ -211,7 +244,7 @@ fun CloudSyncSheet(
                         }
                     }
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(14.dp))
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
@@ -225,7 +258,8 @@ fun CloudSyncSheet(
                         Text(
                             text = statusSubtitle,
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 11.sp
                             )
                         )
                     }
@@ -235,15 +269,19 @@ fun CloudSyncSheet(
             Spacer(modifier = Modifier.height(14.dp))
 
             // Metadata info row: Last Sync + Device + Cloud Total
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                modifier = Modifier.fillMaxWidth()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .iosGlassmorphic(
+                        cornerRadius = 16.dp,
+                        isDark = isDark,
+                        hasSpecularSheen = false,
+                        borderAlpha = 0.5f
+                    )
+                    .padding(14.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     val lastSyncFormatted = remember(syncStatus.lastSyncTime) {
@@ -261,54 +299,92 @@ fun CloudSyncSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // "Sync Now" Button
-            Button(
-                onClick = onSyncNow,
-                enabled = syncStatus.state != SyncState.SYNCING,
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = IndigoPrimary),
+            // "Sync Now" Button with Liquid Neon Sheen
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
-                    .testTag("sync_now_btn")
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        if (syncStatus.state != SyncState.SYNCING)
+                            Brush.linearGradient(listOf(Color(0xFF6366F1), Color(0xFF4F46E5), Color(0xFF06B6D4)))
+                        else
+                            Brush.linearGradient(listOf(Color(0x506366F1), Color(0x304F46E5)))
+                    )
+                    .border(
+                        1.dp,
+                        Brush.linearGradient(listOf(Color.White.copy(alpha = 0.8f), Color.Transparent)),
+                        RoundedCornerShape(16.dp)
+                    )
+                    .drawWithContent {
+                        drawContent()
+                        val sheenHeight = size.height * 0.4f
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(Color.White.copy(alpha = 0.3f), Color.Transparent),
+                                startY = 0f,
+                                endY = sheenHeight
+                            ),
+                            size = Size(size.width, sheenHeight)
+                        )
+                    }
+                    .clickable(
+                        enabled = syncStatus.state != SyncState.SYNCING,
+                        onClick = onSyncNow
+                    )
+                    .testTag("sync_now_btn"),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Sync,
-                    contentDescription = null,
-                    modifier = if (syncStatus.state == SyncState.SYNCING) Modifier
-                        .size(18.dp)
-                        .rotate(rotation) else Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = if (syncStatus.state == SyncState.SYNCING) "Synchronizing..." else "Sync Now",
-                    fontWeight = FontWeight.SemiBold
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Sync,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = if (syncStatus.state == SyncState.SYNCING) Modifier
+                            .size(18.dp)
+                            .rotate(rotation) else Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (syncStatus.state == SyncState.SYNCING) "Synchronizing..." else "Sync Now",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             // Auto-Sync Toggle Row
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-                modifier = Modifier.fillMaxWidth()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .iosGlassmorphic(
+                        cornerRadius = 16.dp,
+                        isDark = isDark,
+                        hasSpecularSheen = false,
+                        borderAlpha = 0.5f
+                    )
+                    .padding(14.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "Automatic Cloud Sync",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
                             text = "Sync instantly whenever tasks change",
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 11.sp
+                            )
                         )
                     }
                     Switch(
@@ -319,44 +395,76 @@ fun CloudSyncSheet(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Multi-Device Simulation Card (Interactive Demo of 2-way cloud sync)
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
-                modifier = Modifier.fillMaxWidth()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .iosGlassmorphic(
+                        cornerRadius = 16.dp,
+                        isDark = isDark,
+                        hasSpecularSheen = false,
+                        borderAlpha = 0.5f
+                    )
+                    .padding(14.dp)
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
+                Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Devices,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = if (isDark) NeonCyan else Color(0xFF6366F1),
                             modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Multi-Device Sync Test",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Simulate another device pushing a task to your cloud database, then automatically sync it to this phone.",
-                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 11.sp
+                        )
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedButton(
-                        onClick = onSimulateRemoteDevice,
-                        shape = RoundedCornerShape(8.dp),
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .testTag("simulate_remote_sync_btn")
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                if (isDark) Color(0x351F293D) else Color(0x186366F1)
+                            )
+                            .border(
+                                1.dp,
+                                if (isDark) NeonCyan.copy(alpha = 0.5f) else Color(0x406366F1),
+                                RoundedCornerShape(10.dp)
+                            )
+                            .clickable(onClick = onSimulateRemoteDevice)
+                            .padding(vertical = 8.dp)
+                            .testTag("simulate_remote_sync_btn"),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.CloudQueue, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Simulate Secondary Device Update")
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Default.CloudQueue,
+                                contentDescription = null,
+                                tint = if (isDark) NeonCyan else Color(0xFF6366F1),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                "Simulate Secondary Device Update",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = if (isDark) NeonCyan else Color(0xFF6366F1)
+                                )
+                            )
+                        }
                     }
                 }
             }
